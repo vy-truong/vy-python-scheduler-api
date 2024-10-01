@@ -1,0 +1,67 @@
+
+# # make sure Python container can talk to the MySQL container
+# # both containers (app and db) are on the same Docker network
+# version: '3'
+# services:
+#   db:
+#     image: mysql:latest
+#     environment:
+#       MYSQL_ROOT_PASSWORD: password
+#       MYSQL_DATABASE: employee_info_db
+#     ports:
+#       - "3306:3306"
+#     volumes:
+#       - db_data:/var/lib/mysql
+#       - ./sql:/docker-entrypoint-initdb.d/create_populate.sql
+#     networks:
+#       - scheduler-network
+
+#   app:
+#     build:
+#       context: .
+#     ports:
+#       - "80:5000"
+#     depends_on:
+#       - db
+#     networks:
+#       - scheduler-network
+
+# networks:
+#   scheduler-network:
+#     driver: bridge
+# volumes:
+#   db_data:
+
+
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: employee_info_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - scheduler-network
+
+  app:
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - scheduler-network
+
+networks:
+  scheduler-network:
+    driver: bridge
+
+volumes:
+  db_data:
+
